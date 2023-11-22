@@ -1,0 +1,142 @@
+[
+  {
+    "name": "Mirettka",
+    "surname": "Metka",
+    "display_name": "Mir3ttk4",
+    "email": "Mirettka@mail.com",
+    "password": "password1"
+  },
+  {
+    "name": "Jacek",
+    "surname": "Kowalski",
+    "display_name": "JackK",
+    "email": "Jacek@mail.com",
+    "password": "password2"
+  },
+  {
+    "name": "Alicja",
+    "surname": "Nowak",
+    "display_name": "AliNow",
+    "email": "Alicja@mail.com",
+    "password": "password3"
+  },
+  {
+    "name": "Piotr",
+    "surname": "Lewandowski",
+    "display_name": "PioLew",
+    "email": "Piotr@mail.com",
+    "password": "password4"
+  },
+  {
+    "name": "Katarzyna",
+    "surname": "Wójcik",
+    "display_name": "KatWoj",
+    "email": "Katarzyna@mail.com",
+    "password": "password5"
+  },
+  {
+    "name": "Adam",
+    "surname": "Wiśniewski",
+    "display_name": "AdWiś",
+    "email": "Adam@mail.com",
+    "password": "password6"
+  },
+  {
+    "name": "Magdalena",
+    "surname": "Kamińska",
+    "display_name": "MagKa",
+    "email": "Magdalena@mail.com",
+    "password": "password7"
+  },
+  {
+    "name": "Michał",
+    "surname": "Kowalczyk",
+    "display_name": "MichK",
+    "email": "Michał@mail.com",
+    "password": "password8"
+  },
+  {
+    "name": "Anna",
+    "surname": "Zielińska",
+    "display_name": "AnZiel",
+    "email": "Anna@mail.com",
+    "password": "password9"
+  },
+  {
+    "name": "Kamil",
+    "surname": "Szymański",
+    "display_name": "KamSzy",
+    "email": "Kamil@mail.com",
+    "password": "password10"
+  },
+  {
+    "name": "Natalia",
+    "surname": "Woźniak",
+    "display_name": "NatWoz",
+    "email": "Natalia@mail.com",
+    "password": "password11"
+  },
+  {
+    "name": "Marcin",
+    "surname": "Kozłowski",
+    "display_name": "MarKoz",
+    "email": "Marcin@mail.com",
+    "password": "password12"
+  },
+  {
+    "name": "Karolina",
+    "surname": "Jankowska",
+    "display_name": "KarJan",
+    "email": "Karolina@mail.com",
+    "password": "password13"
+  },
+  {
+    "name": "Tomasz",
+    "surname": "Mazur",
+    "display_name": "TomMaz",
+    "email": "Tomasz@mail.com",
+    "password": "password14"
+  },
+  {
+    "name": "Monika",
+    "surname": "Wojciechowska",
+    "display_name": "MonWoj",
+    "email": "Monika@mail.com",
+    "password": "password15"
+  },
+  {
+    "name": "Łukasz",
+    "surname": "Kwiatkowski",
+    "display_name": "ŁukKwi",
+    "email": "Łukasz@mail.com",
+    "password": "password16"
+  },
+  {
+    "name": "Paulina",
+    "surname": "Krawczyk",
+    "display_name": "PauKra",
+    "email": "Paulina@mail.com",
+    "password": "password17"
+  },
+  {
+    "name": "Jakub",
+    "surname": "Piotrowski",
+    "display_name": "JakPio",
+    "email": "Jakub@mail.com",
+    "password": "password18"
+  },
+  {
+    "name": "Daria",
+    "surname": "Grabowska",
+    "display_name": "DarGra",
+    "email": "Daria@mail.com",
+    "password": "password19"
+  },
+  {
+    "name": "Kacper",
+    "surname": "Nowakowski",
+    "display_name": "KacNow",
+    "email": "Kacper@mail.com",
+    "password": "password20"
+  }
+]

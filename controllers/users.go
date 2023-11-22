@@ -13,7 +13,7 @@ func FindUsers(c *gin.Context) {
 	var users []models.User
 	models.DB.Find(&users)
 
-	c.JSON(http.StatusOK, gin.H{"data": users})
+	c.JSON(http.StatusOK, gin.H{"res": users})
 }
 
 func CreateUser(c *gin.Context) {
@@ -25,8 +25,8 @@ func CreateUser(c *gin.Context) {
 	}
 
 	// Create user
-	user := models.User{Name: input.Name, Email: input.Email}
+	user := models.User{Name: input.Name, Surname: input.Surname, DisplayName: input.DisplayName, Email: input.Email, Password: input.Password}
 	models.DB.Create(&user)
 
-	c.JSON(http.StatusOK, gin.H{"data": user})
+	c.JSON(http.StatusOK, gin.H{"res": user})
 }
