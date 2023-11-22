@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - database_dockerizing:/var/lib/postgresql/data
+      # - ./dbshell:/docker-entrypoint-initdb.d/
+    networks:
+      - fullstack
+  api:
+    container_name: api
+    build: .
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+    restart: always
+    volumes:
+      - api_volume:/usr/src/app/
+    depends_on:
+      - postgres
+    networks:
+      - fullstack
+
+volumes:
+  database_dockerizing:
+  api_volume:
+
+networks:
+  fullstack:
+    driver: bridge
