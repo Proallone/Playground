@@ -1,19 +1,18 @@
 package main
 
 import (
-	"example/web-service-gin/controllers"
-	"example/web-service-gin/models"
+	"example/web-service-gin/db"
+	"example/web-service-gin/routes"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	r := gin.Default()
+	router := gin.Default()
 
-	models.ConnectDatabase()
+	db.ConnectDatabase()
 
-	r.GET("/users", controllers.FindUsers)
-	r.POST("/users", controllers.CreateUser)
+	routes.UserRoutes(router)
 
-	r.Run()
+	router.Run()
 }
