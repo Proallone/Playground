@@ -3,6 +3,7 @@ package controllers
 import (
 	"example/web-service-gin/db"
 	"example/web-service-gin/models"
+	"example/web-service-gin/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -80,4 +81,35 @@ func FindUserByID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+func RegisterUser(c *gin.Context) {
+	// Validate input
+	var input models.CreateUserInput
+
+	if err := c.BindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	hash, err := utils.HashPassword(input.Password)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"An error occured": err})
+		return
+	}
+	// Register new user
+	user := models.User{Name: input.Name, Surname: input.Surname, DisplayName: input.DisplayName, Email: input.Email, Password: hash}
+	result := db.DB.Create(&user)
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"An error occured: ": result.Error})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"New user with ID ? created": user.Base.ID})
+}
+
+func LoginUser(c *gin.Context) {
+
 }

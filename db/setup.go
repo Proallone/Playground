@@ -6,7 +6,6 @@ import (
 	"example/web-service-gin/models"
 	"fmt"
 	"os"
-	"strconv"
 
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
@@ -16,18 +15,19 @@ import (
 var DB *gorm.DB
 
 func ConnectDatabase() {
-	err := godotenv.Load() //by default, it is .env so we don't have to write
+	var dsn string
+
+	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Error is occurred  on .env file please check")
 	}
-	//we read our .env file
-	host := os.Getenv("POSTGRES_HOST")
-	port, _ := strconv.Atoi(os.Getenv("POSTGRES_PORT")) // don't forget to convert int since port is int type.
-	user := os.Getenv("POSTGRES_USER")
-	dbname := os.Getenv("POSTGRES_DB")
-	pass := os.Getenv("POSTGRES_PASSWORD")
 
-	dsn := fmt.Sprintf("host=%s port=%d user=%s dbname=%s password=%s sslmode=disable", host, port, user, dbname, pass)
+	if os.Getenv("ENVIROMENT") == "docker" {
+		dsn = os.Getenv("DOCKER_PG_CONN_STRING")
+	} else {
+		dsn = os.Getenv("LOCAL_PG_CONN_STRING")
+	}
+
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {

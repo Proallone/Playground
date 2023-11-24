@@ -10,7 +10,8 @@ func UserRoutes(router *gin.Engine) {
 	user := router.Group("/user")
 	{
 		user.GET("/", controllers.FindUsers)
-		user.POST("/", controllers.CreateUser)
+		user.POST("/register", controllers.RegisterUser)
+		user.POST("/login", controllers.LoginUser)
 		user.PATCH("/:id", controllers.UpdateUser)
 		user.GET("/:id", controllers.FindUserByID)
 	}
