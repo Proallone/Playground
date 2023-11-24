@@ -10,8 +10,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// GET /users
-// Get all users
 func FindUsers(c *gin.Context) {
 	var users []models.User
 	db.DB.Find(&users)
@@ -20,18 +18,7 @@ func FindUsers(c *gin.Context) {
 }
 
 func CreateUser(c *gin.Context) {
-	// // Validate input
-	// var input models.CreateUserInput
-	// if err := c.ShouldBindJSON(&input); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	// 	return
-	// }
 
-	// // Create user
-	// user := models.User{Name: input.Name, Surname: input.Surname, DisplayName: input.DisplayName, Email: input.Email, Password: input.Password}
-	// models.DB.Create(&user)
-
-	// c.JSON(http.StatusOK, gin.H{"res": user})
 	if gin.Mode() != gin.DebugMode {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
@@ -107,9 +94,22 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"New user with ID ? created": user.Base.ID})
+	c.JSON(http.StatusCreated, gin.H{"New user created with ID": user.Base.ID})
 }
 
 func LoginUser(c *gin.Context) {
+	var User models.User
+
+	if err := c.BindJSON(&User); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Nieprawidłowe dane logowania"})
+		return
+	}
+
+	if err := db.DB.Table("users").Select("password").Where("email = ?", User.Email).First(&User).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"User not found": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, "D")
 
 }
