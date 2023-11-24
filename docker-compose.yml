@@ -16,11 +16,25 @@ services:
       # - ./dbshell:/docker-entrypoint-initdb.d/
     networks:
       - fullstack
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes: 
+      - redis:/data
+    networks:
+      - fullstack
+
   api:
     container_name: api
     build: .
     env_file:
       - .env
+    environment:
+      - ENVIROMENT=docker
     ports:
       - 8080:8080
     restart: always
@@ -28,12 +42,16 @@ services:
       - api_volume:/usr/src/app/
     depends_on:
       - postgres
+      - redis
     networks:
       - fullstack
 
 volumes:
   database_dockerizing:
+    driver: local
   api_volume:
+  redis:
+    driver: local
 
 networks:
   fullstack:
