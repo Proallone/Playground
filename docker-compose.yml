@@ -16,6 +16,7 @@ services:
       # - ./dbshell:/docker-entrypoint-initdb.d/
     networks:
       - fullstack
+      
   redis:
     image: redis:latest
     container_name: redis

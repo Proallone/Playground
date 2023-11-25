@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"context"
+	"example/web-service-gin/db"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -8,7 +10,8 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		if isAuthenticated(c) {
+		token := c.GetHeader("Authorization") // Pobranie tokenu JWT z nagłówka
+		if isAuthenticated(token) {
 			c.Next()
 			return
 		}
@@ -16,8 +19,10 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-func isAuthenticated(c *gin.Context) bool {
-	// Check if the user is authenticated based on a JWT token, session, or any other mechanism
-	// Return true if the user is authenticated, false otherwise
-	return false
+func isAuthenticated(token string) bool {
+	exists, err := db.REDIS.Exists(context.Background(), token).Result()
+	if err != nil {
+		return false
+	}
+	return exists == 1
 }

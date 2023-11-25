@@ -1,10 +1,12 @@
 package controllers
 
 import (
+	"context"
 	"example/web-service-gin/db"
 	"example/web-service-gin/models"
 	"example/web-service-gin/utils"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -98,18 +100,50 @@ func RegisterUser(c *gin.Context) {
 }
 
 func LoginUser(c *gin.Context) {
-	var User models.User
+	var user models.LoginUserInput
+	var retrievedUser models.User //why we need entire user model?
 
-	if err := c.BindJSON(&User); err != nil {
+	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Nieprawidłowe dane logowania"})
 		return
 	}
 
-	if err := db.DB.Table("users").Select("password").Where("email = ?", User.Email).First(&User).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"User not found": err})
+	if err := db.DB.Table("users").Select("password,id").Where("email = ?", user.Email).First(&retrievedUser).Error; err != nil {
+		c.JSON(http.StatusNotFound, "User not found")
 		return
 	}
 
-	c.JSON(http.StatusOK, "D")
+	if matched := utils.VerifyPassword(user.Password, retrievedUser.Password); !matched {
+		c.JSON(http.StatusOK, "Password doesn't match!")
+		return
+	}
 
+	// Generate Token
+	token, err := utils.GenerateToken(1, retrievedUser.ID, "my-ultra-secure-json-web-token-string")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	// Wygenerowanie tokena lub identyfikatora sesji
+	// sessionID := utils.GenerateUniqueSessionID() // Załóżmy, że funkcja generuje unikalny identyfikator sesji
+	sessionID := token
+
+	// Zapisanie informacji sesji w Redisie
+	err = db.REDIS.Set(context.Background(), sessionID, token, 5*time.Minute).Err() // userDetails to dane użytkownika, a expiration to czas wygaśnięcia sesji
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+	}
+
+	// Ustawienie identyfikatora sesji jako nagłówek lub w odpowiedzi
+	c.Header("Session-ID", sessionID)
+	// c.SetCookie("token", token, 1*60, "/", "localhost", false, true)
+
+	c.JSON(http.StatusOK, gin.H{"status": "success", "token": token})
+
+}
+
+func LogoutUser(c *gin.Context) {
+	c.JSON(http.StatusOK, "Logout")
 }

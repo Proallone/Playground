@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 
+	sredis "github.com/gin-contrib/sessions/redis"
 	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
@@ -15,15 +16,21 @@ import (
 )
 
 var DB *gorm.DB
+var REDIS *redis.Client
+var SESSION_STORE sredis.Store
 
-func ConnectDatabase() {
-	var dsn string
+func ConnectDatabases() {
 
 	err := godotenv.Load()
 	if err != nil {
 		fmt.Println("Error is occurred  on .env file please check")
 	}
+	ConnectToPG()
+	ConnectToRedis()
+}
 
+func ConnectToPG() {
+	var dsn string
 	if os.Getenv("ENVIROMENT") == "docker" {
 		dsn = os.Getenv("DOCKER_PG_CONN_STRING")
 	} else {
@@ -40,13 +47,8 @@ func ConnectDatabase() {
 	if err != nil {
 		return
 	}
-
-	ConnectToRedis()
+	fmt.Println("Postgres is up")
 	DB = database
-}
-
-func ConnectToPG() {
-
 }
 
 func ConnectToRedis() {
@@ -66,22 +68,21 @@ func ConnectToRedis() {
 	})
 
 	pong, err := rdb.Ping(context.Background()).Result()
-	fmt.Println("Redis answered:", pong)
-
 	if err != nil {
-		fmt.Println("Błąd podczas połączenia z Redisem:", err)
+		fmt.Println("An error occured durin redis connection: ", err)
 		return
 	}
 
-	err = rdb.Set(context.Background(), "TEST", "DUPA", 0).Err()
-	if err != nil {
-		fmt.Println("Błąd podczas wpisania do Redisa:", err)
-	}
+	fmt.Println("Redis is up and says:", pong)
 
-	val, err := rdb.Get(context.Background(), "TEST").Result()
+	REDIS = rdb
+}
+
+func CreateSessionStore() {
+	store, err := sredis.NewStore(1, "tcp", "localhost:6379", "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", []byte("secret"))
 	if err != nil {
-		fmt.Println("Błąd podczas wczytania z Redisa:", err)
+		fmt.Println("Błąd podczas inicjalizacji magazynu sesji:", err)
 		return
 	}
-	fmt.Printf("Wartość dla klucza %s: %s", "TEST", val)
+	SESSION_STORE = store
 }

@@ -11,10 +11,9 @@ import (
 func main() {
 	router := gin.Default()
 	router.Use(middlewares.LogMiddleware())
-	router.Use(middlewares.AuthMiddleware())
 	router.Use(middlewares.ErrorHandlerMiddleware())
 
-	db.ConnectDatabase()
+	db.ConnectDatabases()
 
 	routes.UserRoutes(router)
 
