@@ -1,17 +1,20 @@
 package middlewares
 
 import (
-	"context"
-	"example/web-service-gin/db"
+	"example/web-service-gin/utils"
+	"fmt"
 	"net/http"
+	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		token := c.GetHeader("Authorization") // Pobranie tokenu JWT z nagłówka
-		if isAuthenticated(token) {
+		token := c.GetHeader("Authorization")
+		extractedToken := strings.Split(token, "Bearer ")
+		if isAuthenticated(extractedToken[1]) {
 			c.Next()
 			return
 		}
@@ -20,9 +23,7 @@ func AuthMiddleware() gin.HandlerFunc {
 }
 
 func isAuthenticated(token string) bool {
-	exists, err := db.REDIS.Exists(context.Background(), token).Result()
-	if err != nil {
-		return false
-	}
-	return exists == 1
+	userID, err := utils.ValidateToken(token, os.Getenv("JWT_TOKEN"))
+	fmt.Print(userID)
+	return err == nil
 }

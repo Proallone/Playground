@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"context"
 	"example/web-service-gin/db"
 	"example/web-service-gin/models"
 	"example/web-service-gin/utils"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -102,6 +102,7 @@ func RegisterUser(c *gin.Context) {
 func LoginUser(c *gin.Context) {
 	var user models.LoginUserInput
 	var retrievedUser models.User //why we need entire user model?
+	jwtTTL := time.Minute * 5
 
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Nieprawidłowe dane logowania"})
@@ -119,28 +120,16 @@ func LoginUser(c *gin.Context) {
 	}
 
 	// Generate Token
-	token, err := utils.GenerateToken(1, retrievedUser.ID, "my-ultra-secure-json-web-token-string")
+	token, err := utils.GenerateToken(jwtTTL, retrievedUser.ID, os.Getenv("JWT_TOKEN"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
-	// Wygenerowanie tokena lub identyfikatora sesji
-	// sessionID := utils.GenerateUniqueSessionID() // Załóżmy, że funkcja generuje unikalny identyfikator sesji
-	sessionID := token
+	c.Header("Authorization", "Bearer "+token)
+	// c.SetCookie("token", token, jwtTTL*60, "/", "localhost", false, true)
 
-	// Zapisanie informacji sesji w Redisie
-	err = db.REDIS.Set(context.Background(), sessionID, token, 5*time.Minute).Err() // userDetails to dane użytkownika, a expiration to czas wygaśnięcia sesji
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
-	}
-
-	// Ustawienie identyfikatora sesji jako nagłówek lub w odpowiedzi
-	c.Header("Session-ID", sessionID)
-	// c.SetCookie("token", token, 1*60, "/", "localhost", false, true)
-
-	c.JSON(http.StatusOK, gin.H{"status": "success", "token": token})
+	c.JSON(http.StatusOK, gin.H{"status": "Login successful"})
 
 }
 
