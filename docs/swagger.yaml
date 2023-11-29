@@ -1,0 +1,33 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  title: First Go Gin API project
+  version: "1.0"
+paths:
+  /user/{id}:
+    patch:
+      operationId: Update user
+      parameters:
+      - description: todo data
+        in: body
+        name: data
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      summary: Update user with given ID
+swagger: "2.0"

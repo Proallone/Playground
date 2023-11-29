@@ -46,6 +46,12 @@ func CreateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Dane zostały zaseedowane"})
 }
 
+// @Summary Update user with given ID
+// @ID Update user
+// @Produce json
+// @Param data body object true "update user"
+// @Success 200 {object} object
+// @Router /user/{id} [patch]
 func UpdateUser(c *gin.Context) {
 	id := c.Param("id")
 	message := id + " is " + "good"
