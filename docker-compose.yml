@@ -49,10 +49,25 @@ services:
     networks:
       - fullstack
 
+  app:
+    container_name: app
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    env_file:
+      - ./frontend/.env
+    ports:
+      - 5000:5000
+    networks:
+      - fullstack
+    volumes:
+      - app_volume:/usr/src/front
+
 volumes:
   database_dockerizing:
     driver: local
   api_volume:
+  app_volume:
   redis:
     driver: local
 
