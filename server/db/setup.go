@@ -9,7 +9,6 @@ import (
 	"os"
 
 	sredis "github.com/gin-contrib/sessions/redis"
-	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -21,10 +20,6 @@ var SESSION_STORE sredis.Store
 
 func ConnectDatabases() {
 
-	err := godotenv.Load()
-	if err != nil {
-		fmt.Println("Error is occurred  on .env file please check")
-	}
 	ConnectToPG()
 	ConnectToRedis()
 }
@@ -69,7 +64,7 @@ func ConnectToRedis() {
 
 	pong, err := rdb.Ping(context.Background()).Result()
 	if err != nil {
-		fmt.Println("An error occured durin redis connection: ", err)
+		fmt.Println("An error occured during redis connection: ", err)
 		return
 	}
 

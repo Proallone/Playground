@@ -5,8 +5,11 @@ import (
 	"example/web-service-gin/docs"
 	"example/web-service-gin/middlewares"
 	"example/web-service-gin/routes"
+	"fmt"
+	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -26,6 +29,11 @@ import (
 // @BasePath /
 // @query.collection.format multi
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error occured. No .env file found. Please check the path.")
+	}
 	router := gin.Default()
 	docs.SwaggerInfo.BasePath = "/api"
 	router.Use(middlewares.LogMiddleware())
@@ -37,4 +45,5 @@ func main() {
 	routes.UserRoutes(router)
 
 	router.Run()
+	fmt.Println("Server is running!")
 }
