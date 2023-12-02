@@ -12,20 +12,20 @@ services:
       - POSTGRES_USER=user
       - POSTGRES_DB=postgres
     volumes:
-      - database_dockerizing:/var/lib/postgresql/data
+      - postgres_volume:/var/lib/postgresql/data
       # - ./dbshell:/docker-entrypoint-initdb.d/
     networks:
       - fullstack
       
-  redis:
-    image: redis:latest
-    container_name: redis
+  redis_volume:
+    image: redis_volume:latest
+    container_name: redis_volume
     restart: always
     ports:
       - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    command: redis_volume-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     volumes: 
-      - redis:/data
+      - redis_volume:/data
     networks:
       - fullstack
 
@@ -45,7 +45,7 @@ services:
       - api_volume:/usr/src/app/
     depends_on:
       - postgres
-      - redis
+      - redis_volume
     networks:
       - fullstack
 
@@ -54,8 +54,8 @@ services:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
-    env_file:
-      - ./frontend/.env
+    # env_file:
+    #   - ./frontend/.env
     ports:
       - 5000:5000
     networks:
@@ -64,11 +64,11 @@ services:
       - app_volume:/usr/src/front
 
 volumes:
-  database_dockerizing:
+  postgres_volume:
     driver: local
   api_volume:
   app_volume:
-  redis:
+  redis_volume:
     driver: local
 
 networks:

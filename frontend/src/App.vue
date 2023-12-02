@@ -2,13 +2,6 @@
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 
-// variable
-const msg = 'Hello Hitler!'
-
-// functions
-function log() {
-  console.log(msg)
-}
 </script>
 
 
@@ -18,11 +11,10 @@ function log() {
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
-      <button @click="log">{{ msg }}</button>
-
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/login">Login</RouterLink>
       </nav>
     </div>
   </header>
