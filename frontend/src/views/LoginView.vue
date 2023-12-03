@@ -5,12 +5,16 @@ import UserLogin from '../components/UserLogin.vue'
 
 <template>
 
-  <div class="container">
+  <div>
     <UserLogin/>
+    <h1>SASSY</h1>
   </div>
 </template>
   
-<style>
-
+<style lang="scss">
+ @import "../assets/scss/global.scss";
+  div {
+    background-color: $color-tertiary;
+  }
 </style>
   
