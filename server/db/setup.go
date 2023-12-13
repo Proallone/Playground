@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"os"
 
-	sredis "github.com/gin-contrib/sessions/redis"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,7 +15,15 @@ import (
 
 var DB *gorm.DB
 var REDIS *redis.Client
-var SESSION_STORE sredis.Store
+
+const (
+	dockerPGConnString = "DOCKER_PG_CONN_STRING"
+	localPGConnString  = "LOCAL_PG_CONN_STRING"
+	environment        = "ENVIROMENT"
+	dockerRedisAddr    = "DOCKER_REDIS_ADDR"
+	localRedisAddr     = "LOCAL_REDIS_ADDR"
+	redisPassword      = "REDIS_PASSWORD"
+)
 
 func ConnectDatabases() {
 
@@ -26,34 +33,40 @@ func ConnectDatabases() {
 
 func ConnectToPG() {
 	var dsn string
-	if os.Getenv("ENVIROMENT") == "docker" {
-		dsn = os.Getenv("DOCKER_PG_CONN_STRING")
+
+	if os.Getenv(environment) == "docker" {
+		dsn = os.Getenv(dockerPGConnString)
 	} else {
-		dsn = os.Getenv("LOCAL_PG_CONN_STRING")
+		dsn = os.Getenv(localPGConnString)
 	}
 
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		panic("Failed to connect to database!")
+		fmt.Println("Failed to connect to postgres with error:", err)
+		return
 	}
 
 	err = database.AutoMigrate(&models.User{})
+
 	if err != nil {
+		fmt.Println("Failed to automigrate postgres schema with error: ", err)
 		return
 	}
-	fmt.Println("Postgres is up")
+
+	fmt.Println("Server connected to postgres")
 	DB = database
 }
 
 func ConnectToRedis() {
-	var redis_addr string
-	redis_pass := os.Getenv("REDIS_PASSWORD")
 
-	if os.Getenv("ENVIROMENT") == "docker" {
-		redis_addr = os.Getenv("DOCKER_REDIS_ADDR")
+	redis_pass := os.Getenv(redisPassword)
+	var redis_addr string
+
+	if os.Getenv(environment) == "docker" {
+		redis_addr = os.Getenv(dockerRedisAddr)
 	} else {
-		redis_addr = os.Getenv("LOCAL_REDIS_ADDR")
+		redis_addr = os.Getenv(localRedisAddr)
 	}
 
 	rdb := redis.NewClient(&redis.Options{
@@ -62,22 +75,14 @@ func ConnectToRedis() {
 		DB:       0,
 	})
 
-	pong, err := rdb.Ping(context.Background()).Result()
+	_, err := rdb.Ping(context.Background()).Result()
+
 	if err != nil {
 		fmt.Println("An error occured during redis connection: ", err)
 		return
 	}
 
-	fmt.Println("Redis is up and says:", pong)
+	fmt.Println("Server connected to redis")
 
 	REDIS = rdb
-}
-
-func CreateSessionStore() {
-	store, err := sredis.NewStore(1, "tcp", "localhost:6379", "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81", []byte("secret"))
-	if err != nil {
-		fmt.Println("Błąd podczas inicjalizacji magazynu sesji:", err)
-		return
-	}
-	SESSION_STORE = store
 }
