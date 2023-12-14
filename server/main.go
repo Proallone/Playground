@@ -3,6 +3,7 @@ package main
 import (
 	"example/web-service-gin/db"
 	"example/web-service-gin/docs"
+	logger "example/web-service-gin/log"
 	"example/web-service-gin/middlewares"
 	"example/web-service-gin/routes"
 	"fmt"
@@ -31,10 +32,15 @@ import (
 func main() {
 
 	err := godotenv.Load()
+	// log.Log.InitLogrus()
+
 	if err != nil {
 		log.Fatal("Error occured. No .env file found. Please check the path.")
 	}
+
+	logger.Logger.Info("Logger initialized")
 	router := gin.Default()
+
 	docs.SwaggerInfo.BasePath = "/api"
 	router.Use(middlewares.LogMiddleware())
 	router.Use(middlewares.ErrorHandlerMiddleware())
